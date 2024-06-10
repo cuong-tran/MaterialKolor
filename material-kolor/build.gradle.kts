@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.compose)
@@ -5,6 +7,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.dokka)
     alias(libs.plugins.publish)
+    id("maven-publish")
 }
 
 kotlin {
@@ -22,6 +25,7 @@ kotlin {
         browser()
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
     }
@@ -82,5 +86,20 @@ android {
 
     kotlin {
         jvmToolchain(jdkVersion = 11)
+    }
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("maven") { // Replace 'maven' with a suitable name
+                groupId = "com.github.cuong-tran" // Replace with your actual group ID
+                artifactId = "material-kolor" // Replace with your actual artifact ID
+                version = "1.6.2" // Replace with your actual version
+
+                // Add the artifacts you want to publish (e.g., JAR, AAR)
+                from(components["kotlin"]) // Assuming you have a 'release' component
+            }
+        }
     }
 }
